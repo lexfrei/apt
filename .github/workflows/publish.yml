@@ -1,0 +1,74 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [release]
+  schedule:
+    # Nothing pushes here when a project releases, so this is what picks new
+    # packages up. A project that wants the repository updated at once sends
+    # a repository_dispatch instead of waiting for the next run.
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  PROJECTS: mcp-tg claudeline
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Collect packages from the latest release of each project
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eux
+          mkdir --parents deb
+          for project in $PROJECTS; do
+            # A project whose latest release carries no .deb is skipped rather
+            # than failing the run: that is the normal state between adding a
+            # project to the list and its next tagged release.
+            gh release download --repo "lexfrei/$project" --pattern '*.deb' --dir deb --clobber || true
+          done
+          ls -la deb
+
+      - name: Import the signing key
+        id: gpg
+        uses: crazy-max/ghaction-import-gpg@v7
+        with:
+          gpg_private_key: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.APT_GPG_PASSPHRASE }}
+
+      - name: Build the repository
+        env:
+          GPG_KEY_ID: ${{ steps.gpg.outputs.fingerprint }}
+          ORIGIN: lexfrei
+        run: ./build-repo.sh deb public
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

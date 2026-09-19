@@ -1,0 +1,6 @@
+# markdownlint-cli2 configuration
+
+config:
+  # One line per paragraph: the renderer wraps to the reader's width, and a
+  # hard wrap breaks list rendering on narrow viewports.
+  MD013: false
