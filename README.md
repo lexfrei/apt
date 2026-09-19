@@ -61,8 +61,10 @@ A project listed before its first release with a `.deb` gets skipped, not treate
 Signed with a dedicated key, not my personal one. To rotate it:
 
 ```bash
-gpg --batch --passphrase 'SOMETHING' --quick-generate-key 'lexfrei apt repository <f@lex.la>' default default 3y
-gpg --armor --export-secret-key 'lexfrei apt repository'
+gpg --batch --passphrase '' --quick-generate-key 'lexfrei apt repository <f@lex.la>' default sign 3y
+gpg --armor --export-secret-key 'lexfrei apt repository' | gh secret set APT_GPG_PRIVATE_KEY --repo lexfrei/apt
 ```
 
-Private key goes into the `APT_GPG_PRIVATE_KEY` secret, its passphrase into `APT_GPG_PASSPHRASE`. The build exports the public half into the published tree, so users always fetch it from the repository itself. Rotating means everyone re-imports the key.
+The key carries no passphrase. One would live in the same secret store as the key it protects, so anything that reads the key reads the passphrase beside it; the secret itself is the boundary.
+
+The build exports the public half into the published tree, so users always fetch it from the repository itself. Rotating means everyone re-imports the key.
