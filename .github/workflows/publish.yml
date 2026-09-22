@@ -4,11 +4,6 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [release]
-  schedule:
-    # Nothing pushes here when a project releases, so this is what picks new
-    # packages up. A project that wants the repository updated at once sends
-    # a repository_dispatch instead of waiting for the next run.
-    - cron: '17 */6 * * *'
 
 permissions:
   contents: read

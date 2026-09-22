@@ -41,7 +41,7 @@ Built for `amd64` and `arm64`.
 
 The packages come from the projects themselves. Each one builds its own `.deb` with GoReleaser `nfpms` and attaches it to its GitHub release, and the workflow here downloads the latest release of every project in `PROJECTS`. No binaries are stored in this repo.
 
-Runs happen on a schedule, on `workflow_dispatch`, and on a `repository_dispatch` of type `release`. A project that wants its package published right away sends the dispatch at the end of its release workflow:
+Runs happen on a `repository_dispatch` of type `release` and on `workflow_dispatch` for a manual rebuild. There is no schedule, so every project has to send the dispatch at the end of its release workflow:
 
 ```yaml
 - run: gh api repos/lexfrei/apt/dispatches --field event_type=release
