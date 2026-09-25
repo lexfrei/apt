@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PROJECTS: mcp-tg claudeline
+  PROJECTS: mcp-tg ailine
 
 jobs:
   build:

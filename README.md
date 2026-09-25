@@ -23,7 +23,7 @@ Then install what you came for:
 
 ```bash
 sudo apt install mcp-tg
-sudo apt install claudeline
+sudo apt install ailine
 ```
 
 Built for `amd64` and `arm64`.
@@ -33,7 +33,7 @@ Built for `amd64` and `arm64`.
 | Package | What it does |
 | --- | --- |
 | [mcp-tg](https://github.com/lexfrei/mcp-tg) | MCP server for the Telegram Client API |
-| [claudeline](https://github.com/lexfrei/claudeline) | Statusline for Claude Code |
+| [ailine](https://github.com/lexfrei/ailine) | Statusline for Claude Code (formerly claudeline) |
 
 ## How it works
 
