@@ -44,6 +44,12 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.APT_GPG_PRIVATE_KEY }}
 
+      # ubuntu-26.04 runner images no longer ship apt-ftparchive.
+      - name: Install repository tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends apt-utils
+
       - name: Build the repository
         env:
           GPG_KEY_ID: ${{ steps.gpg.outputs.fingerprint }}
